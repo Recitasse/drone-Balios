@@ -20,7 +20,7 @@ sudo systemctl start apache2
 sudo systemctl status apache2
 
 # Lancer le lien php
-firefox -new-window http://127.0.2.1/index.php
+firefox -new-window http://dronebalios.com/
 
 echo -e "Vous pouvez afficher toutes les commandes avec la commande aide \n"
 echo -e "\033[33mLes commandes : \033[0m"
