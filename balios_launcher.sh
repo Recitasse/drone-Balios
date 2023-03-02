@@ -43,7 +43,13 @@ do
        
     elif [ "${cmd}" == "joyinput" ]
     then
-       sudo cat /proc/bus/input/devices | grep -B 2 -A 9 Controller
+       result = $(sudo cat /proc/bus/input/devices | grep -B 2 -A 9 Controller)
+       if [ -z ${result} ]
+       then
+           echo -e "\033[031mVous n'avez pas branché de joystick (ou celui-ci n'est pas reconnu).\033[0m"
+       else
+           echo -e "${result}\n"
+       fi
 
     else
        echo -e "\033[31mCette commande n'existe pas! \033[0m"
