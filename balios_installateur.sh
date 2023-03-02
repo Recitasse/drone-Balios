@@ -1,11 +1,10 @@
 #!/bin/bash
 
 current_directory=$(pwd)
-home_user=$HOME
 user=$USER
 firefox_path=$(which firefox)
 
-chmod  +x /home/${user}/Desktop/Balios/balios_launcher.sh
+chmod  +x ${current_directory}/balios_launcher.sh
 
 #Création du .desktop
 echo "[Desktop Entry]" > /home/${user}/Desktop/Balios.desktop
@@ -13,7 +12,7 @@ echo "Encoding=UTF-8" >> /home/${user}/Desktop/Balios.desktop
 echo "Version=1.0" >> /home/${user}/Desktop/Balios.desktop
 echo "Type=Application" >> /home/${user}/Desktop/Balios.desktop
 echo "Terminal=true" >> /home/${user}/Desktop/Balios.desktop
-echo "Exec=bash -c /home/${user}/Desktop/Balios/balios_launcher.sh" >> /home/${user}/Desktop/Balios.desktop
+echo "Exec=bash -c ${current_directory}/balios_launcher.sh" >> /home/${user}/Desktop/Balios.desktop
 echo "Name=Balios" >> /home/${user}/Desktop/Balios.desktop
 echo "Icon=${current_directory}/www/bateau.jpg" >> /home/${user}/Desktop/Balios.desktop
 echo "Categories=Application" >> /home/${user}/Desktop/Balios.desktop
