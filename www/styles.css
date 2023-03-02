@@ -1,0 +1,481 @@
+/* animation index */
+
+#boatContainer {
+  width: 300px;
+  height: 250px;
+  overflow: hidden;
+  position: relative;
+  margin: 50px auto;
+  text-align: center;
+}
+
+#boat {
+  width: 300px;
+  height: 220px;
+  background-image: url(bateau.jpg);
+  background-size: cover;
+  margin:auto;
+}
+
+/* Style de l'index */
+
+.demarrage {
+   padding: 10px;
+   border: 2px solid black;
+   border-radius: 10px;
+   background-color: #E6E6E6;
+   }
+
+.session {
+  text-align: center;
+  padding: 1px;
+  width: auto;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 5px;
+}
+
+.session p {
+  font-size: 15px;
+}
+
+.session#ss0 {
+    background-color: black;
+}
+
+.session#ss1 {
+    background-color: gray;
+}
+
+.session#ss2 {
+    background-color: blue;
+}
+
+.session#ss3 {
+    background-color: red;
+}
+
+.session#ss4 {
+    background-color: orange;
+}
+
+.session#ss5 {
+    background-color: green;
+}
+
+html {
+   font-family: Tahoma, sans-serif;
+   color: black;
+   background-color: #0B4C5F;
+}
+
+body {
+  
+  border: 2px solid black;
+  padding: 25px;
+  width: 90vmax;
+  background-color: white;
+  border-radius: 10px;
+  background-color: #f5f5f5;
+  margin: 5vmin auto;
+}
+
+.menu {
+  background-color: #f2f2f2;
+  padding: 10px;
+  }
+  
+
+.title {
+  font-size: 25px;
+  font-weight: bold;
+  background-color: #E6E6E6;
+  padding: 10px;
+  border-bottom: 1px solid black;
+}
+
+.title:hover {
+  cursor: pointer;
+  }
+
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
+/* Pour les boutons de chargement de session*/
+
+#cs {
+   background-color: blue;
+   cursor: pointer;
+   }
+   
+#cs:hover {
+   background-color: #0040FF;
+   cursor: pointer;
+}
+
+#ns {
+   background-color: green;
+   }
+
+#ns:hover {
+   cursor: pointer;
+   background-color: #2EFE2E;
+   }
+   
+#ss {
+   background-color: red;
+   }
+
+#ss:hover {
+   cursor: pointer;
+   background-color: #F53A3A;
+   }
+
+/* Style général */
+
+a {
+  font-weight: bold;
+  font-size: 20px;
+  text-decoration: none;
+  font-style: italic;
+  color: #FF8000;
+}
+
+a:hover {
+  background-color: rgba(0, 229, 194, 0.2);
+  }
+
+p, label {
+  font-size: 20px;
+  }
+
+h2 {
+  font-size: 35px;
+}
+
+h3 {
+  font-size: 25px;
+}
+
+h4 {
+  font-size: 22px;
+}
+
+.text {
+   text-align: left;
+   padding: 10px;
+}
+
+.image_desc {
+   width: 60vmin;
+   height: auto;
+   border: 3px solid #0B4C5F;
+   border-radius: 5%;
+   margin: auto;
+   margin-top: 2vmin;
+   display: block;
+   
+}
+
+.dot {
+   color: #FF8000;
+   font-weight: bold;
+   font-size: 25px;
+}
+
+.image_center {
+   text-align: center;
+}
+
+.description {
+   color: #B45F04;
+   margin-top: 10px;
+   font-size: 20px;
+   font-weight: bold;
+}
+
+h1 {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 50px;
+  font-size: 50px;
+}
+
+.erreur {
+   color: red;
+   font-weight: bold;
+   font-size: 15px;
+}
+
+th, td {
+   width: 20%; 
+   text-align: center;
+   }
+
+
+.debut {
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid gray;
+}
+
+
+legend {
+  font-weight: bold;
+}
+
+
+button {
+  width: 100%;
+  padding: 10px 20px;
+  background-color: green;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button:hover {
+   background-color: #01DF01;
+}
+
+/* Pour new session*/
+
+form#new_s {
+  width: 75vmin;
+  margin: 50px auto;
+  padding: 20px;
+  border: 2px solid gray;
+  border-radius: 10px;
+  background-color: rgba(240,240,240);
+  box-shadow: 5px 5px 5px grey;
+}
+
+label, input {
+  display: block;
+  margin-bottom: 10px;
+}
+
+label {
+  font-size:20px;
+  font-weight: bold;
+}
+
+input[type="submit"], input[type="text"], input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 20px;
+  box-sizing: border-box;
+}
+
+input[type="password"] {
+   width: auto;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+}
+
+button[type="submit"] {
+  width: 100%;
+  padding: 10px 20px;
+  background-color: green;
+  font-size: 20px;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+button[type="submit"]:hover
+{
+  background-color: rgba(0, 178, 10);
+}
+
+/* stop session */
+
+#v {
+  background-color: #81F79F;
+  }
+
+#v:hover {
+  background-color: #A9F5BC;
+  }
+  
+#r {
+  background-color: #F5BCA9;
+  }
+  
+#r:hover {
+  background-color: #F6D8CE;
+  }
+  
+#b {
+  background-color: #A9D0F5;
+  }
+  
+#b:hover {
+  background-color: #CEECF5;
+  }
+
+/* modifier les class et id */
+
+ .option2 {
+  margin: 50px auto;
+  padding: 20px;
+  border: 2px solid gray;
+  border-radius: 10px;
+  background-color: #E0F8F7;
+}
+
+fieldset {
+  background-color: #FAFAFA;
+}
+
+legend {
+  font-weight: bold;
+  font-size: 25px;
+}
+
+.option input[type="submit"], input[type="text"] {
+  width: 80%;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.option input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  box-sizing: border-box;
+}
+
+input[type="checkbox"], label {
+    display: inline-block;
+}
+
+.option input[type="submit"] {
+  width: 100%;
+  padding: 10px 20px;
+  background-color: green;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.option input[type="submit"]:hover {
+   background-color: #01DF01;
+}
+
+.warning {
+   width: 60px;
+   height: 60px;
+   visibility: hidden;
+}
+
+/* ini */
+
+table {
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+.board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.light {
+  width: 50px;
+  height: 50px;
+  border-radius: 5px;
+  margin-bottom: 5px;
+  border: 1px solid black;
+}
+
+.red {
+  background-color: red;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.green {
+  background-color: green;
+}
+
+.text {
+  font-size: 18px;
+  margin-top: 20px;
+}
+th, td {
+   width: 10%; 
+   text-align: center;
+   padding: 5px;
+   }
+
+
+thead {
+   background-color: #E0E6F8;
+   padding: 5px;
+   }
+
+tbody td {
+     border: 1px solid black;
+     padding: 5px;
+     }
+
+thead th {
+   border: 1px solid black;
+   border-bottom: 3px double black;
+   }
+   
+tfoot {
+   background-color: #E0E6F8;
+   padding: 5px;
+   }
+   
+.verif_ok, .verif_non {
+   display:inline-block; 
+   width: 10px; 
+   height: 10px; 
+   border-radius: 5px; 
+   background-color: green;
+}
+
+.verif_non {
+   background-color: red;
+}
+   
+tfoot td {
+ border: 1px solid black;
+ text-align: left;
+ padding: 5px;
+ }
