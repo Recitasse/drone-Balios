@@ -10,11 +10,6 @@ echo "
   
   "
 
-# Lancer le lien php
-#firefox_path=$(which firefox)
-#url=$("drone")
-#sudo ${firefox_path} ${url}
-
 echo -e "\033[33mCentre de démarrage et d'arrêt du Balios\033[0m\n"
 
 # Lancement du programme
@@ -23,6 +18,9 @@ sudo systemctl status mysql
 
 sudo systemctl start apache2
 sudo systemctl status apache2
+
+# Lancer le lien php
+firefox -new-window http://127.0.2.1/index.php
 
 echo -e "Vous pouvez afficher toutes les commandes avec la commande aide \n"
 echo -e "\033[33mLes commandes : \033[0m"
