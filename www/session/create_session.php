@@ -6,7 +6,7 @@ include "../H_DBCONNECT_lib.php";
 
 $ss_Name = $_POST['Name'];
 
-$sql_verif = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$ss_Name'";
+$sql_verif = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = droneBalios_'$ss_Name'";
 $result = mysqli_query($mysqli, $sql_verif);
 
 if (mysqli_num_rows($result) > 0) 
@@ -92,7 +92,7 @@ else
 
 // Création de la base de donnée
 
-$sql = "CREATE DATABASE ". $ss_Name;
+$sql = "CREATE DATABASE droneBalios_". $ss_Name;
 
 if (mysqli_query($mysqli, $sql)) 
 {
