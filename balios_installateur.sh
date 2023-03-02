@@ -98,6 +98,30 @@ else
   echo -e "      \033[33mConfiguration actuelle du par feu :\033[0m"
   sudo ufw status
 fi
+# on regarde le dns et l'ip du site
+DNS="/etc/hosts"
+dns_nom="dronebalios.com"
+if ! grep -q "${dns_nom}" "${DNS}"; then
+  echo "127.0.4.1	${dns_nom}" >> "${DNS}"
+fi
+# On l'ajoute à la configuration d'apache
+vm="/etc/apache2/apache2.conf"
+vm_ip="ServerName dronebalios.com"
+if ! grep -q "${vm_ip}" "${vm}"; then
+  sudo bash -c "echo '<VirtualHost 127.0.4.1:80>' >> '${vm}'"
+  sudo bash -c "echo 'ServerName dronebalios.com' >> '${vm}'"
+  sudo bash -c "echo 'DocumentRoot /home/raphael/Desktop/Balios/www' >> '${vm}'"
+  sudo bash -c "echo '<Directory /home/raphael/Desktop/Balios/www>' >> '${vm}'"
+  sudo bash -c "echo 'Options Indexes FollowSymLinks' >> '${vm}'"
+  sudo bash -c "echo 'AllowOverride None' >> '${vm}'"
+  sudo bash -c "echo 'Require all granted' >> '${vm}'"
+  sudo bash -c "echo '</Directory>' >> '${vm}'"
+  sudo bash -c "echo '</VirtualHost>' >> '${vm}'"
+else
+   echo -e "\033[32m\033[1m✔\033[0m Configuration apache2 déjà effectuée.\033[0m"
+fi
+echo -e "\033[32m\033[1m✔\033[0m Configuration apache2 terminée.\033[0m\n"
+
 
 # Installation d'Arduino
 check=$(which arduino)
