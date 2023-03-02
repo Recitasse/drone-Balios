@@ -156,12 +156,12 @@ fi
 echo -e "___________________________________________________________"
 echo -e "Vérification des accès des privilèges sudoers :"
 #Ajout des sudoers pour lire les scripts python
-if sudo grep -q "www-data ALL=(ALL) NOPASSWD: /home/raphael/Desktop/Balios/joystick/lecture_event.py" /etc/sudoers; then
+if sudo grep -q "www-data ALL=(ALL) NOPASSWD: /home/${user}/Desktop/Balios/joystick/lecture_event.py" /etc/sudoers; then
   echo -e "\033[32m•  Joystick accéssible en lecture ! \033[0m"
 else
   echo -e "\033[31m• www-data n'a pas l'autorisation d'utiliser \033[1mjoystick.py\033[0m.\033[0m"
-  echo -e "\033[33mCommande effectuée : www-data ALL=(ALL) NOPASSWD: /home/raphael/Desktop/Balios/joystick/lecture_event.py\033[0m"
-  echo "www-data ALL=(ALL) NOPASSWD: /home/raphael/Desktop/Balios/joystick/lecture_event.py" | sudo -S tee -a /etc/sudoers
+  echo -e "\033[33mCommande effectuée : www-data ALL=(ALL) NOPASSWD: /home/${user}/Desktop/Balios/joystick/lecture_event.py\033[0m"
+  echo "www-data ALL=(ALL) NOPASSWD: /home/${user}/Desktop/Balios/joystick/lecture_event.py" | sudo -S tee -a /etc/sudoers
 fi
 
 if sudo grep -q "www-data ALL=(ALL) NOPASSWD: /usr/bin/python3" /etc/sudoers; then
