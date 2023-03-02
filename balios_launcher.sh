@@ -24,8 +24,9 @@ firefox -new-window http://dronebalios.com/
 
 echo -e "Vous pouvez afficher toutes les commandes avec la commande aide \n"
 echo -e "\033[33mLes commandes : \033[0m"
-echo -e "   \033[32mstop\033[0m: pour arrêter."
-echo -e "   \033[32mredm\033[0m: pour redémarrer.\n"
+echo -e "   \033[33mstop\033[0m: pour arrêter."
+echo -e "   \033[33mredm\033[0m: pour redémarrer.\n"
+echo -e "   \033[33mjoyinput\033[0m: pour afficher le nom de l'évènement.\n"
 
 # Lire une commande
 read -p "Votre commande : " cmd
@@ -39,10 +40,18 @@ do
        sudo systemctl status mysql
        sudo systemctl status apache2
        echo -e "\033[32mMySQL et Apache ont redémarré correctement! \033[0m"
-    
+       
+    elif [ "${cmd}" == "joyinput" ]
+    then
+       sudo cat /proc/bus/input/devices | grep -B 2 -A 9 Controller
+
     else
        echo -e "\033[31mCette commande n'existe pas! \033[0m"
     fi
+    
+
+       
+    
     read -p "Votre commande : " cmd
 done
 
