@@ -4,9 +4,9 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 include "../H_DBCONNECT_lib.php";
 
-$ss_Name = $_POST['Name'];
+$ss_Name = "droneBalios_".$_POST['Name'];
 
-$sql_verif = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = droneBalios_'$ss_Name'";
+$sql_verif = "SELECT SCHEMA_NAME FROM INFORMATION_SCHEMA.SCHEMATA WHERE SCHEMA_NAME = '$ss_Name'";
 $result = mysqli_query($mysqli, $sql_verif);
 
 if (mysqli_num_rows($result) > 0) 
@@ -46,7 +46,7 @@ if(empty($_POST['ard']))
 // Pour le nom de la base de donnée
 if(isset($_POST['Name']) && !empty($_POST['Name'])) 
 {
-   $ss_Name = htmlspecialchars(preg_replace('/[^a-zA-Z0-9\']/', '_',$_POST['Name']));
+   $ss_Name = htmlspecialchars(preg_replace('/[^a-zA-Z0-9\']/', '_',"droneBalios_".$_POST['Name']));
 }
 else
 {
@@ -92,7 +92,7 @@ else
 
 // Création de la base de donnée
 
-$sql = "CREATE DATABASE droneBalios_". $ss_Name;
+$sql = "CREATE DATABASE ".$ss_Name."";
 
 if (mysqli_query($mysqli, $sql)) 
 {
@@ -138,9 +138,8 @@ if (mysqli_query($mysqli, $sql))
 else 
 {
     header("Location: ../new_session.php?err=creat");
+    
 }
-
 ?>
-
 
 
