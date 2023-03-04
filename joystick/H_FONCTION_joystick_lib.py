@@ -1,6 +1,7 @@
 from numpy import arccos, sqrt, pi
 import asyncio
 import evdev
+from H_ARDUINOCONNECTOR_lib import envoyer_data
 from H_DBCONNECTOR_joystick_lib import Joystick, integration_commande, lecture_manette_commande
 
 # Fonction qui détermine le signe d'un input
@@ -31,7 +32,7 @@ def psi_extract(x,y):
 		
 
 # Lecture et sauvegarde des évènements
-async def read_events(device,cursor,db):
+async def read_events(device,cursor,db,ser):
     DATA = {'POSITION': {'PSI':0, 'Y':0, 'X':0}, 'REGLAGE': {'MODE':1, 'AUTO':0, 'INVERSE':1}}
     async for event in device.async_read_loop():
         if event.type == evdev.ecodes.EV_ABS:
@@ -84,6 +85,7 @@ async def read_events(device,cursor,db):
         # Prise en comtpe des réglages
         integration_commande(DATA, cursor, db)
         lecture_manette_commande(cursor)
+        envoyer_data(ser)
         print(DATA)
                
                

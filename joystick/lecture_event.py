@@ -2,7 +2,9 @@
 import evdev
 import asyncio
 import sys
+
 # Librairies crées
+from H_ARDUINOCONNECTOR_lib import arduino_connex
 from H_FONCTION_joystick_lib import read_events
 from H_DBCONNECTOR_joystick_lib import Joystick, integration_commande, lecture_manette_commande
 from H_DBCONNECTOR_lib import connexion_db
@@ -15,11 +17,12 @@ Joystick(cursor, db)
 
 
 async def main():
+    ser = arduino_connex()
     # Connexion et ajout de l'event correspondant
     device = evdev.InputDevice("/dev/input/" + str(sys.argv[1]))
     # Récupération des données du Joystick en async
     
-    await read_events(device,cursor,db)
+    await read_events(device,cursor,db,ser)
 
 asyncio.run(main())
             
