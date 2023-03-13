@@ -8,14 +8,12 @@ async def read_data(ser,cursor,db):
    phrase = ser.readline()
    phrase = phrase.decode('utf-8')
    print(explode(":",phrase))
-   '''
    try:
       jsonD_parse = json.loads(jsonD_decode)
       v = jsonD_parse["SONAR"]["D"]
       integration_sonar(v, cursor, db)
       lecture_capteur_sonar(cursor)
    except json.decoder.JSONDecodeError:
-      # Les données sont vides
-      pass'''
+      pass
 
 

@@ -20,6 +20,7 @@ def lecture_capteur_sonar(cursor):
    cursor.execute(query)
    result = cursor.fetchone()
    print(result)
+<<<<<<< HEAD
 # ---------- Fonction explode ----------------------
 def explode(separateur, phrase):
    return string.split(separateur)
