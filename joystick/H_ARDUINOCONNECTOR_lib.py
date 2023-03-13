@@ -1,10 +1,14 @@
 import serial
+import json
 
-def arduino_connex():
-   return serial.Serial('/dev/ttyACM0', 9600)
+def arduino_connex(nom, baud):
+   return serial.Serial('/dev/tty'+str(nom), baud)
 
 
-def envoyer_data(ser):
+def envoyer_data(ser, DATA):
 
-   ser.write(b'Hello, Arduino')
+   data_string = str(json.dumps(DATA))+'\n'
+   data_string = data_string.encode('utf-8')
+   
+   ser.write(data_string)
 

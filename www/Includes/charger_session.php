@@ -38,16 +38,16 @@ Ici se trouvent toutes les sessions créées et sauvées.
     $BDD['pass'] = "droneBalios1";
     
     $mysqli = new mysqli($BDD['host'], $BDD['user'], $BDD['pass']);
-    $DatabaseExclue = array("information_schema", "mysql", "performance_schema", "sys");
 
     $DATA = $mysqli->query("SHOW DATABASES");
-    $DATA_array = array();
+    $databases = array();
     
     while ($row = $DATA ->fetch_array(MYSQLI_NUM)) {
-       array_push($DATA_array, $row[0]);
+       if(strpos($row[0], 'droneBalios'))
+       {
+       	array_push($databases, $row[0]);
+       }
     }
-    
-    $databases = array_diff($DATA_array, $DatabaseExclue);
 
     // boucle sur les bases de données
     
@@ -66,7 +66,8 @@ Ici se trouvent toutes les sessions créées et sauvées.
     <?php
     
     mysqli_close($mysqli);
-    for ($i = 0; $i <= count($databases)-1; $i++) {
+    echo var_dump($databases)." oui";
+    for ($i = 1; $i <= count($databases); $i++) {
        // connexion à la base de donnée $i
        $mysqli = new mysqli($BDD['host'], $BDD['user'], $BDD['pass'], $databases[$i]);
        

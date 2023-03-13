@@ -3,6 +3,7 @@
 current_directory=$(pwd)
 user=$USER
 firefox_path=$(which firefox)
+nom_term="Balios"
 
 chmod  +x ${current_directory}/balios_launcher.sh
 
@@ -12,11 +13,11 @@ echo "Encoding=UTF-8" >> /home/${user}/Desktop/Balios.desktop
 echo "Version=1.0" >> /home/${user}/Desktop/Balios.desktop
 echo "Type=Application" >> /home/${user}/Desktop/Balios.desktop
 echo "Terminal=true" >> /home/${user}/Desktop/Balios.desktop
-echo "Exec=bash -c ${current_directory}/balios_launcher.sh" >> /home/${user}/Desktop/Balios.desktop
+echo "Exec=gnome-terminal --title '${USER}-${nom_term}' --command 'bash -c ${current_directory}/balios_launcher.sh'" >> /home/${user}/Desktop/Balios.desktop
 echo "Name=Balios" >> /home/${user}/Desktop/Balios.desktop
 echo "Icon=${current_directory}/www/bateau.jpg" >> /home/${user}/Desktop/Balios.desktop
 echo "Categories=Application" >> /home/${user}/Desktop/Balios.desktop
-echo "Comments= Application permettant de contrôler le drone" >> /home/${user}/Desktop/Balios.desktop
+echo "Comment=Application permettant de contrôler le drone" >> /home/${user}/Desktop/Balios.desktop
 
 chmod a+rx /home/${user}/Desktop/Balios.desktop
 sudo chmod 755 /home/${user}/Desktop/Balios.desktop
@@ -30,7 +31,6 @@ echo -e "Vérification des logiciels et packages.\n"
 #On regarde pour mysql
 if ! dpkg-query -W -f='${Status}' mysql-server 2>/dev/null | grep -q "ok installed"; then
   echo -e "\033[31m\033[1m❌  MySQL n'est pas installé ! \033[0m\033[0m"
-  sudo apt-get update
   sudo apt-get install mysql-server
   sudo mysql_
   echo -e "\033[32m\033[1m✔  MySQL installé ! \033[0m\033[0m"
@@ -62,7 +62,6 @@ fi
 
 if ! dpkg-query -W -f='${Status}' python3 2>/dev/null | grep -q "ok installed"; then
   echo -e "\033[31m\033[1m❌  Python3 n'est pas installé ! \033[0m\033[0m"
-  sudo apt-get update
   sudo apt-get install python3
 else
   echo -e "\033[32m\033[1m✔  Python3 installé ! \033[0m\033[0m"
@@ -74,14 +73,12 @@ lieu=$(dir /usr/bin/python3 | grep pip.py)
 if [ -n "${lieu}" ]; then
    sudo curl https://bootstrap.pypa.io/get-pip.py -o /usr/bin/get-pip.py
    sudo python3 /usr/bin/get-pip.py
-   sudo apt-get update
    echo -e "   \033[31m• La librairie pip installée dans le dossier /usr/bin/python3.\033[0m "
 fi
 
 # Pour apache2
 if ! dpkg-query -W -f='${Status}' apache2 2>/dev/null | grep -q "ok installed"; then
   echo -e "\033[31m\033[1m❌  Apache2 n'est pas installé ! \033[0m\033[0m"
-  sudo apt-get update
   sudo apt-get install apache2
   
   #Configuration du server Apache
@@ -110,8 +107,8 @@ vm_ip="ServerName dronebalios.com"
 if ! grep -q "${vm_ip}" "${vm}"; then
   sudo bash -c "echo '<VirtualHost 127.0.4.1:80>' >> '${vm}'"
   sudo bash -c "echo 'ServerName dronebalios.com' >> '${vm}'"
-  sudo bash -c "echo 'DocumentRoot /home/raphael/Desktop/Balios/www' >> '${vm}'"
-  sudo bash -c "echo '<Directory /home/raphael/Desktop/Balios/www>' >> '${vm}'"
+  sudo bash -c "echo 'DocumentRoot /home/raphael/Desktop/drone-Balios/www' >> '${vm}'"
+  sudo bash -c "echo '<Directory /home/raphael/Desktop/drone-Balios/www>' >> '${vm}'"
   sudo bash -c "echo 'Options Indexes FollowSymLinks' >> '${vm}'"
   sudo bash -c "echo 'AllowOverride None' >> '${vm}'"
   sudo bash -c "echo 'Require all granted' >> '${vm}'"
@@ -123,6 +120,22 @@ fi
 echo -e "\033[32m\033[1m✔\033[0m Configuration apache2 terminée.\033[0m\n"
 
 
+# Installation de Putty
+checkpuTTY=$(which putty)
+if [ -z "${checkpuTTY}" ]; then
+   echo -e "\033[31m\033[1m❌ PuTTY n'est pas installé ! \033[0m\033[0m"
+   sudo apt-get install putty
+fi
+echo -e "\033[32m\033[1m✔  PuTTY installé ! \033[0m\033[0m"
+
+#Installation de Tmux
+tmux=$(which tmux)
+if [ -z "${checkpuTTY}" ]; then
+   echo -e "\033[31m\033[1m❌ tmux n'est pas installé ! \033[0m\033[0m"
+   sudo apt-get install tmux
+fi
+echo -e "\033[32m\033[1m✔  tmux installé ! \033[0m\033[0m"
+
 # Installation d'Arduino
 check=$(which arduino)
 if [ -n "${check}" ]; then
@@ -132,7 +145,6 @@ if [ -n "${check}" ]; then
 else
   # installation d'arduino
   echo -e "\033[31m\033[1m❌  Arduino n'est pas installé ! \033[0m\033[0m"
-  sudo apt-get update
   echo -e "\033[33mTéléchargement d'arduino : 1.8.14\033[0m"
   sudo wget https://downloads.arduino.cc/arduino-1.8.14-linux64.tar.xz -P /home/${user}/.local/share
   echo -e "\033[33mTéléchargement réussit ! 1.8.14\033[0m"
@@ -146,15 +158,14 @@ else
   echo -e "\033[32m\033[1m✔  Arduino installé ! \033[0m\033[0m"
   arduino_version=$(arduino --version | grep "Arduino: ")
   echo "      Version : ${arduino_version}"
-
 fi
 
+
 # Installation des packages python
-sudo apt-get update -y
 
 
 echo -e "\nInstallations des librairies python :"
-lib_pyth=("pip" "evdev" "asyncio" "mysql-connector-python" "numpy" "pyserial")
+lib_pyth=("pip" "evdev" "asyncio" "mysql-connector-python" "numpy" "pyserial" "json")
 
 for i in "${lib_pyth[@]}"; do
 
@@ -179,12 +190,20 @@ fi
 echo -e "___________________________________________________________"
 echo -e "Vérification des accès des privilèges sudoers :"
 #Ajout des sudoers pour lire les scripts python
-if sudo grep -q "www-data ALL=(ALL) NOPASSWD: /home/${user}/Desktop/Balios/joystick/lecture_event.py" /etc/sudoers; then
+if sudo grep -q "www-data ALL=(ALL) NOPASSWD: ${current_directory}/joystick/lecture_event.py" /etc/sudoers; then
   echo -e "\033[32m•  Joystick accéssible en lecture ! \033[0m"
 else
   echo -e "\033[31m• www-data n'a pas l'autorisation d'utiliser \033[1mjoystick.py\033[0m.\033[0m"
   echo -e "\033[33mCommande effectuée : www-data ALL=(ALL) NOPASSWD: /home/${user}/Desktop/Balios/joystick/lecture_event.py\033[0m"
   echo "www-data ALL=(ALL) NOPASSWD: /home/${user}/Desktop/Balios/joystick/lecture_event.py" | sudo -S tee -a /etc/sudoers
+fi
+
+if sudo grep -q "www-data ALL=(ALL) NOPASSWD: /usr/bin/screen, ${current_directory}/Initialisation_arduino/bin/arduino-cli" /etc/sudoers; then
+echo -e "\033[32m•  Arduino accéssible en lecture ! \033[0m"
+else
+  echo -e "\033[31m• www-data n'a pas l'autorisation d'utiliser \033[1mArduino\033[0m.\033[0m"
+  echo -e "\033[33mCommande effectuée : www-data ALL=(ALL) NOPASSWD: /usr/bin/screen, ${current_directory}/Initialisation_arduino/bin/arduino-cli\033[0m"
+  echo "www-data ALL=(ALL) NOPASSWD: www-data ALL=(ALL) NOPASSWD: /usr/bin/screen, ${current_directory}/Initialisation_arduino/bin/arduino-cli" | sudo -S tee -a /etc/sudoers
 fi
 
 if sudo grep -q "www-data ALL=(ALL) NOPASSWD: /usr/bin/python3" /etc/sudoers; then
@@ -200,6 +219,11 @@ echo -e "\033[32m\033[1m✔  Paramétrage des sudoers effectué ! \033[0m\033[0m
 
 echo -e "\n \033[32m\033[1m	    Installation réussit! \033[0m\033[0m"
 echo -e "\n___________________________________________________________"
+
+# Création d'un fichier variable
+
+echo "# Sauvegarde des variables" > ${current_directory}/variable.properties
+echo "/home/${user}/.local/share/arduino-1.8.14/arduino-builder" >> ${current_directory}/variable.properties
 
 # Affichage
 

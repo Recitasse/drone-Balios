@@ -18,6 +18,7 @@ error_reporting(E_ALL);
 </head>
 <body>
 
+<div class="whole">
 <h1><u>CENTRE ADMIN BALIOS</u></h1>
 
 <div id="boatContainer">
@@ -119,9 +120,11 @@ if(isset($_SESSION) && !empty($_SESSION))
 include "Includes/initialiseur.php";
 }
 ?>
-
 <br>
+</div>
+</div>
 
+<div class="whole">
 <details>
 <summary class="title" style="border-top: 1px solid black;">MODE D'EMPLOI</summary>
 
@@ -148,6 +151,7 @@ include "Includes/initialiseur.php";
 </details>
 </div>
 
+</div>
 </div>
 </body>
 </html>

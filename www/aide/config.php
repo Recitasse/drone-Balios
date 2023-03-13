@@ -7,6 +7,7 @@
    <link rel="shortcut icon" type="image/x-icon" href="../bateau_ico.ico">
 </head>
 <body>
+<div class="whole">
 <?php
 
 ini_set('display_errors', 1);
@@ -30,7 +31,7 @@ error_reporting(E_ALL);
 	<?php
 	}
     elseif($_GET['voir'] == 'carte') {
-    	$output = shell_exec("ls /dev/ttyACM0*");
+    	$output = shell_exec("ls /dev/ttyACM*");
 	?>
 	<h3>AIDE ARDUINO</h3>
 	<p>Chercher dans les informations suivantes votre carte, généralement on <b>les reconnait</b> par la notation <i>ACMX</i> ou X est son numéro, et prenez celui de la carte que vous voulez.</p>
@@ -61,6 +62,6 @@ error_reporting(E_ALL);
      }
      }
 ?>
-
+</div>
 </body>
 </html>

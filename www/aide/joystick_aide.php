@@ -7,6 +7,9 @@
    <link rel="shortcut icon" type="image/x-icon" href="../bateau_ico.ico">
 </head>
 
+<body>
+<div class="whole">
+
 <h3>Vérification du branchement de la manette</h3>
 <p>Vérifier si votre manette est bien branchée. Si vous avez plusieurs manettes faite attention dans le choix de celle-ci dans le prompt suivant. Pour le moment le logiciel n'est configuré que pour une seule manette.</p>
 <p>Si jamais votre manette est branchée mais qu'elle n'est toujours pas détectée peut être que <b>son nom est différent de ce qu'attend le logiciel</b> ("Controller" en l'occurence ici), il vous faudra vérifier par vous même via le lien ici <a target="_blank" href='config.php?voir=joystick'>aide pour configuration de la manette</a>.</p>
@@ -34,3 +37,6 @@ $output_device = shell_exec("cat /proc/bus/input/devices | grep -B 2 -A 9 Contro
      }
      ?>
 </div>
+</div>
+</body>
+</html>

@@ -7,7 +7,7 @@
    <link rel="shortcut icon" type="image/x-icon" href="../bateau_ico.ico">
 </head>
 <body>
-
+<div class="whole">
 <h3>Vérification du branchement de la carte Arduino</h3>
 <p>Vérifier si votre carte est bien branchée. Si vous avez plusieurs cartes faite attention dans le choix de celle-ci dans le prompt suivant. Pour le moment le logiciel n'est configuré que pour une seule carte.</p>
 <p>Si jamais votre carte est branchée mais qu'elle n'est toujours pas détectée peut être que <b>son nom est différent de ce qu'attend le logiciel</b> ("ACM*" en l'occurence ici), il vous faudra vérifier par vous même via le lien ici <a target="_blank" href='config.php?voir=carte'>aide pour configuration de la carte</a>.</p>
@@ -38,3 +38,6 @@ $output_device = shell_exec("ls /dev/ttyACM*");
      }
      ?>
 </div>
+</div>
+</body>
+</html>

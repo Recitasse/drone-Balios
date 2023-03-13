@@ -16,6 +16,9 @@ session_start();
    <link rel="shortcut icon" type="image/x-icon" href="../bateau_ico.ico">
 </head>
 <body>
+
+<div class="whole">
+
 <h1>CONFIGURER UNE SESSION<h1>
 
 <h2>COMMENT CRÉER UNE SESSION<h2>
@@ -23,8 +26,8 @@ session_start();
 <p>La session sert à stocker des variabes, qui serviront à récupérer des données (données bathymétriques) et les exploiter plus tard quand bon nous sembles, mais aussi à stocker des paramètres importants indispensables à l'initialisation du drone.</p>
 <p>Vous disposez de 4 champs dont 2 absolument obligatoires, <b>le nom du joystick</b> et le <b>nom de la carte Arduino</b> (bien que celui ci possède une valeur par défaut).</p>
 
-
 <h2>CRÉATION DE LA SESSION</h2>
+
 <?php
 if(isset($_GET['err']) && !empty($_GET['err']))
 {
@@ -38,7 +41,6 @@ if(isset($_GET['err']) && !empty($_GET['err']))
 ?>
 
 <p>Le <b>nom de la session</b> sera le nom de la base de donnée, le <b>Lieu</b> est le nom du lac, le <b>nom du joystick</b> correspond au nom de <i>l'évènement</i> (<a href="../aide/joystick_aide.php" target="_blank">voir ici</a>) qui lui est associé pour l'ordinateur et le <b>nom d'Arduino</b> comme pour le joystick est le nom du port utilisé par Arduino (<a href="../aide/arduino_aide.php" target="_blank">voir ici</a>).
-
 <div class="creation_session">
 <form action="../session/create_session.php" method="post" id="new_s">
   <div>
@@ -147,6 +149,7 @@ if(isset($_GET['err']) && !empty($_GET['err']))
   </div>
 </form>
 
+</div>
 </div>
 </body>
 </html>
