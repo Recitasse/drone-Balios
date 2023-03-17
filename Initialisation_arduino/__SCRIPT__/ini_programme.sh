@@ -6,7 +6,8 @@ progress_bar() {
     local percent=$1
     local bar_length=50
     local filled_length=$((percent * bar_length / 100))
-    local bar=$(printf "%-${bar_length}s" "|" | tr ' ' '-')
+    local bar
+    bar=$(printf "%-${bar_length}s" "|" | tr ' ' '-')
     printf "\r%s %d%%" "${bar:0:filled_length}|${bar:filled_length}" "$percent"
 }
 
@@ -26,7 +27,7 @@ progress_bar() {
 
 #====== Le branchement de la carte arduino =========
 #1.1] le branchement de la carte
-carte=$(ls /dev/ttyACM* | grep $1)
+carte=$(glob /dev/ttyACM* | grep "$1")
 
 if [ -z "${carte}" ]
 then
@@ -45,9 +46,8 @@ fi
 
 #1.3] S'assurer de la communication entre les cartes
 #1.3.1) Utilisation de arduino-cli pour 
-sudo ../bin/arduino-cli compile --fqbn arduino:avr:uno ../Communication_sender/Communication_sender.ino && sudo ../bin/arduino-cli upload -p /dev/tty"$1" --fqbn arduino:avr:uno ../Communication_sender/Communication_sender.ino
 
-if [ $? -ne 0 ]; then
+if ! sudo ../bin/arduino-cli compile --fqbn arduino:avr:uno ../Communication_sender/Communication_sender.ino && sudo ../bin/arduino-cli upload -p /dev/tty"$1" --fqbn arduino:avr:uno ../Communication_sender/Communication_sender.ino; then
     echo "Erreur, impossible de compiler le sketch arduino"
     exit 1
 else
@@ -68,7 +68,7 @@ while true;do
       break
   fi
   
-  progress_bar $((it * 100 / 5000 * 100 / 40))
+  progress_bar $((100 * 100 *it / (40 * 5000)))
   if [ "${it}" -gt "${max}" ]
   then
       exit 1
@@ -98,18 +98,16 @@ fi
 
 #2.3) Programme de lecture
 sudo ../bin/arduino-cli lib install ArduinoJson
-sudo ../bin/arduino-cli compile --fqbn arduino:avr:uno ../joystic_ini/joystic_ini.ino && sudo ../bin/arduino-cli upload -p /dev/tty"$1" --fqbn arduino:avr:uno ../joystic_ini/joystic_ini.ino
 
-if [ $? -ne 0 ]; then
+if ! sudo ../bin/arduino-cli compile --fqbn arduino:avr:uno ../joystic_ini/joystic_ini.ino && sudo ../bin/arduino-cli upload -p /dev/tty"$1" --fqbn arduino:avr:uno ../joystic_ini/joystic_ini.ino; then
     echo "Erreur, impossible de compiler le sketch arduino"
     exit 1
 else
     sed -i 's/COMPILATION_SKETCH_JOYSTICK_COMMUNICATION=0/COMPILATION_SKETCH_JOYSTICK_COMMUNICATION=1/g' valid_var.properties
 fi
 
-sudo python3 ../../joystick/lecture_event.py "$2" "$1" 500000 &
-
-if [ $? -ne 0 ]; then
+if ! sudo python3 ../../joystick/lecture_event.py "$2" "$1" 500000 &
+then
     echo "Erreur, impossible d'éxécuter le script python de lecture."
     exit 1
 else
@@ -129,7 +127,7 @@ while true;do
       break
   fi
   
-  progress_bar $((it2 * 100 / 5000 * 100 / 40))
+  progress_bar $((100 * 100 *it / (40 * 5000)))
   if [ "${it2}" -gt "${max}" ]
   then
       exit 1
@@ -142,9 +140,8 @@ sudo pkill -f lecture_event.py
 # ================= Lecture du sonar =============
 
 #3.1) Programme de lecture
-sudo ../bin/arduino-cli compile --fqbn arduino:avr:uno ../SONAR_ini/SONAR_ini.ino && sudo ../bin/arduino-cli upload -p /dev/tty"$1" --fqbn arduino:avr:uno ../SONAR_ini/SONAR_ini.ino
 
-if [ $? -ne 0 ]; then
+if ! sudo ../bin/arduino-cli compile --fqbn arduino:avr:uno ../SONAR_ini/SONAR_ini.ino && sudo ../bin/arduino-cli upload -p /dev/tty"$1" --fqbn arduino:avr:uno ../SONAR_ini/SONAR_ini.ino; then
     echo "Erreur, impossible de compiler le sketch arduino"
     exit 1
 else
@@ -164,7 +161,7 @@ while true;do
       break
   fi
   
-  progress_bar $((it2 * 100 / 5000 * 100 / 40))
+  progress_bar $((100 * 100 *it / (40 * 5000)))
   if [ "${it2}" -gt "${max}" ]
   then
       exit 1
@@ -175,5 +172,3 @@ done
 # ================= Lecture du GPS =============
 
 #4.1) Programme de lecture
-
-
