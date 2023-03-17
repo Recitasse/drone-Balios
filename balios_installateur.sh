@@ -2,26 +2,27 @@
 
 current_directory=$(pwd)
 user=$USER
-firefox_path=$(which firefox)
 nom_term="Balios"
 
-chmod  +x ${current_directory}/balios_launcher.sh
+chmod  +x "${current_directory}"/balios_launcher.sh
 
 #Création du .desktop
-echo "[Desktop Entry]" > /home/${user}/Desktop/Balios.desktop
-echo "Encoding=UTF-8" >> /home/${user}/Desktop/Balios.desktop
-echo "Version=1.0" >> /home/${user}/Desktop/Balios.desktop
-echo "Type=Application" >> /home/${user}/Desktop/Balios.desktop
-echo "Terminal=true" >> /home/${user}/Desktop/Balios.desktop
-echo "Exec=gnome-terminal --title '${USER}-${nom_term}' --command 'bash -c ${current_directory}/balios_launcher.sh'" >> /home/${user}/Desktop/Balios.desktop
-echo "Name=Balios" >> /home/${user}/Desktop/Balios.desktop
-echo "Icon=${current_directory}/www/bateau.jpg" >> /home/${user}/Desktop/Balios.desktop
-echo "Categories=Application" >> /home/${user}/Desktop/Balios.desktop
-echo "Comment=Application permettant de contrôler le drone" >> /home/${user}/Desktop/Balios.desktop
+{
+echo "[Desktop Entry]"
+echo "Encoding=UTF-8"
+echo "Version=1.0"
+echo "Type=Application"
+echo "Terminal=true"
+echo "Exec=gnome-terminal --title '${USER}-${nom_term}' --command 'bash -c ${current_directory}/balios_launcher.sh'"
+echo "Name=Balios"
+echo "Icon=${current_directory}/www/bateau.jpg"
+echo "Categories=Application"
+echo "Comment=Application permettant de contrôler le drone"
+} >> /home/"${user}"/Desktop/Balios.desktop
 
-chmod a+rx /home/${user}/Desktop/Balios.desktop
-sudo chmod 755 /home/${user}/Desktop/Balios.desktop
-gio set /home/${user}/Desktop/Balios.desktop metadata::trusted true
+chmod a+rx /home/"${user}"/Desktop/Balios.desktop
+sudo chmod 755 /home/"${user}"/Desktop/Balios.desktop
+gio set /home/"${user}"/Desktop/Balios.desktop metadata::trusted true
 
 # On renome le terminal
 echo -ne "\033]0;Centre de démarrage du Balios\007"
@@ -39,17 +40,16 @@ if ! dpkg-query -W -f='${Status}' mysql-server 2>/dev/null | grep -q "ok install
   echo "Paramétrer MYSQL"
   mysql_secure_installation 
   echo "Entrer votre mot de passe utilisateur MySQL :"
-  read -s mdp_mysql
+  read -r mdp_mysql
   
   # Démarrage de mysql pour créer un utilisateur
-  if (mysql -u root -p${mdp_mysql} -e "SELECT User FROM mysql.user WHERE User='balios'@'localhost';" | grep "'balios'@'localhost'" > /dev/null)
+  if (mysql -u root -p"${mdp_mysql}" -e "SELECT User FROM mysql.user WHERE User='balios'@'localhost';" | grep "'balios'@'localhost'" > /dev/null)
   then
      echo "L'utilisateur est prêt"
      else
      echo "Création de l'utilisateur:"
-     pass= $("droneBalios1")
-     mysql -u root -p$password -e "CREATE user 'balios'@'localhost' Identified by 'droneBalios1';"
-     mysql -u root -p$password -e "GRANT ALL PRIVILEGES ON *.* TO 'balios'@'localhost';"
+     mysql -u root -p -e "CREATE user 'balios'@'localhost' Identified by 'droneBalios1';"
+     mysql -u root -p -e "GRANT ALL PRIVILEGES ON *.* TO 'balios'@'localhost';"
      fi
   
 else
@@ -129,7 +129,6 @@ fi
 echo -e "\033[32m\033[1m✔  PuTTY installé ! \033[0m\033[0m"
 
 #Installation de Tmux
-tmux=$(which tmux)
 if [ -z "${checkpuTTY}" ]; then
    echo -e "\033[31m\033[1m❌ tmux n'est pas installé ! \033[0m\033[0m"
    sudo apt-get install tmux
@@ -146,15 +145,15 @@ else
   # installation d'arduino
   echo -e "\033[31m\033[1m❌  Arduino n'est pas installé ! \033[0m\033[0m"
   echo -e "\033[33mTéléchargement d'arduino : 1.8.14\033[0m"
-  sudo wget https://downloads.arduino.cc/arduino-1.8.14-linux64.tar.xz -P /home/${user}/.local/share
+  sudo wget https://downloads.arduino.cc/arduino-1.8.14-linux64.tar.xz -P /home/"${user}"/.local/share
   echo -e "\033[33mTéléchargement réussit ! 1.8.14\033[0m"
-  sudo chmod 777 /home/${user}/.local/share/arduino-1.8.14-linux64.tar.xz
-  sudo tar -xf /home/${user}/.local/share/arduino-1.8.14-linux64.tar.xz -C /home/${user}/.local/share
-  sudo rm /home/${user}/.local/share/arduino-1.8.14-linux64.tar.xz
-  cd /home/${user}/.local/share/arduino-1.8.14/
+  sudo chmod 777 /home/"${user}"/.local/share/arduino-1.8.14-linux64.tar.xz
+  sudo tar -xf /home/"${user}"/.local/share/arduino-1.8.14-linux64.tar.xz -C /home/"${user}"/.local/share
+  sudo rm /home/"${user}"/.local/share/arduino-1.8.14-linux64.tar.xz
+  cd /home/"${user}"/.local/share/arduino-1.8.14/ || exit
   chmod +x install.sh
   sudo ./install.sh
-  sudo usermod -a -G dialout ${user}
+  sudo usermod -a -G dialout "${user}"
   echo -e "\033[32m\033[1m✔  Arduino installé ! \033[0m\033[0m"
   arduino_version=$(arduino --version | grep "Arduino: ")
   echo "      Version : ${arduino_version}"
@@ -171,13 +170,13 @@ for i in "${lib_pyth[@]}"; do
 
   if python3 -c "import ${i}" 2> /dev/null; then
     echo -e "   \033[32m• La librairie \033[1m${i}\033[0m est installé ! \033[0m"
-    version=$(python3 -m pip show ${i} | grep Version | awk '{print $2}')
+    version=$(python3 -m pip show "${i}" | grep Version | awk '{print $2}')
     echo "                  └$version."
   else
     echo -e "   \033[31m• La librairie ${i} n'est pas installée.\033[0m "
-    sudo python3 -m pip install ${i}
+    sudo python3 -m pip install "${i}"
     echo -e "   \033[32m• La librairie \033[1m${i}\033[0m est installé ! \033[0m"
-    version=$(python3 -m pip show ${i} | grep Version | awk '{print $2}')
+    version=$(python3 -m pip show "${i}" | grep Version | awk '{print $2}')
     echo "                  └$version."
   fi
 done
@@ -220,11 +219,6 @@ echo -e "\033[32m\033[1m✔  Paramétrage des sudoers effectué ! \033[0m\033[0m
 echo -e "\n \033[32m\033[1m	    Installation réussit! \033[0m\033[0m"
 echo -e "\n___________________________________________________________"
 
-# Création d'un fichier variable
-
-echo "# Sauvegarde des variables" > ${current_directory}/variable.properties
-echo "/home/${user}/.local/share/arduino-1.8.14/arduino-builder" >> ${current_directory}/variable.properties
-
 # Affichage
 
 echo "
@@ -244,7 +238,6 @@ echo "
    |___/_/ \_\____|___\___/|___/  \_(_)_(_)__/ 
    ___________________________________________
   |___________________________________________|                                               
-
    "
 echo -e "Le logiciel \033[1mBalios\033[0m est actuellement en \033[1mv.1.0\033[0m.\nCertaines applications et modules ne sont pas encore disponnibles,\nvous pouvez lire les mise à jour successives dans les logs ci-dessus.\n" 
 
@@ -256,7 +249,3 @@ echo -e "___________________________________________________________"
 
 echo -e "\033[1mLa version v.1.0 est la première version encore non opérationnelle.\033[0m"
 echo -e "\nAppuyer sur un touche pour fermer"
-
-read
-
-
