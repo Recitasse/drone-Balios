@@ -1,6 +1,9 @@
-from numpy import arccos, sqrt, pi
+from numpy import arccos, sqrt, pi, sin, cos, tan, log, exp
 import evdev
 import time
+from wgs2lamb import wgs2lamb
+from datetime import datetime
+
 
 # Fonction qui détermine le signe d'un input
 def signe(v):
@@ -12,6 +15,21 @@ def signe(v):
 def map_angle(val):
     return int((val+45)*(256/90)+100)
 
+def integrite(parties) ->bool:
+   if(len(parties) != 8):
+        return False
+   if(len(parties[4]) < 6 and len(parties[5]) < 6):
+        return False
+   try:
+        float(parties[4])
+        float(parties[5])
+        float(parties[6])
+   except ValueError:
+        return False
+   return True
+        
+         
+     
 
 # Calcul de la valeur Psi du Joystick
 def psi_extract(x,y):
@@ -47,7 +65,7 @@ def envoyer_data_df(ser, DATA, f):
                
 # Lecture et sauvegarde des évènements au format JSON
 async def read_events_f(device,ser, f):
-    DATA = {'POSITION': {'PSI':0, 'POW':0, 'Y':0, 'X':0}, 'REGLAGE': {'MODE':1, 'AUTO':0, 'INVERSE':1}}
+    DATA = {'POSITION': {'PSI':0, 'POW':0, 'Y':0, 'X':0}, 'REGLAGE': {'MODE':1, 'AUTO':1, 'ARRET':1}}
     async for event in device.async_read_loop():
         if event.type == evdev.ecodes.EV_ABS:
             if event.code == evdev.ecodes.ABS_X:
@@ -55,7 +73,7 @@ async def read_events_f(device,ser, f):
             elif event.code == evdev.ecodes.ABS_Y:
                 y_pos = event.value
             if 'x_pos' in locals() and 'y_pos' in locals():
-                DATA['POSITION']['PSI'] = round(psi_extract(x_pos,-y_pos),1)*DATA['REGLAGE']['INVERSE']
+                DATA['POSITION']['PSI'] = round(psi_extract(x_pos,-y_pos),1)*DATA['REGLAGE']['ARRET']
                 DATA['POSITION']['POW'] = round(pow_psi(x_pos,-y_pos, 3),2)
      
         elif event.type == evdev.ecodes.EV_KEY:
@@ -66,19 +84,19 @@ async def read_events_f(device,ser, f):
                elif DATA['REGLAGE']['MODE'] == 2 and event.value == 1:
                   DATA['REGLAGE']['MODE'] = 1
                   
-            # Réglage de l'inversement
+            # Réglage de l'ARRETment
             elif event.code == evdev.ecodes.BTN_START:
-               if DATA['REGLAGE']['INVERSE'] == -1 and event.value == 1:
-                  DATA['REGLAGE']['INVERSE'] = 1
-               elif DATA['REGLAGE']['INVERSE'] == 1 and event.value == 1:
-                  DATA['REGLAGE']['INVERSE'] = -1
+               if DATA['REGLAGE']['ARRET'] == -1 and event.value == 1:
+                  DATA['REGLAGE']['ARRET'] = 1
+               elif DATA['REGLAGE']['ARRET'] == 1 and event.value == 1:
+                  DATA['REGLAGE']['ARRET'] = -1
                   
             # Réglage du mode automatique
             elif event.code == evdev.ecodes.BTN_SELECT:
-               if DATA['REGLAGE']['AUTO'] == 0 and event.value == 1:
+               if DATA['REGLAGE']['AUTO'] == -1 and event.value == 1:
                   DATA['REGLAGE']['AUTO'] = 1
                elif DATA['REGLAGE']['AUTO'] == 1 and event.value == 1:
-                  DATA['REGLAGE']['AUTO'] = 0
+                  DATA['REGLAGE']['AUTO'] = -1
                   
             # On récupère les valeurs pour avancer
             elif event.code == evdev.ecodes.BTN_A:
@@ -86,11 +104,11 @@ async def read_events_f(device,ser, f):
             elif event.code == evdev.ecodes.BTN_B:
                DATA['POSITION']['Y'] = -1*event.value*DATA['REGLAGE']['MODE']
             elif event.code == evdev.ecodes.BTN_Y:
-               DATA['POSITION']['Y'] = event.value*DATA['REGLAGE']['INVERSE']*DATA['REGLAGE']['MODE']
+               DATA['POSITION']['Y'] = event.value*DATA['REGLAGE']['ARRET']*DATA['REGLAGE']['MODE']
             
             # On récupère la translation
             elif event.code == evdev.ecodes.BTN_X:
-               DATA['POSITION']['X'] = event.value*DATA['REGLAGE']['INVERSE']*DATA['REGLAGE']['MODE']
+               DATA['POSITION']['X'] = event.value*DATA['REGLAGE']['ARRET']*DATA['REGLAGE']['MODE']
                
             elif event.code == evdev.ecodes.BTN_TL:
                DATA['POSITION']['PSI'] = 1*event.value*5
@@ -99,5 +117,25 @@ async def read_events_f(device,ser, f):
                
         DATA_new = ["S,"+str(map_angle(DATA['POSITION']['PSI']))+","+str(DATA['POSITION']['X'])+","+str(DATA['POSITION']['Y'])+","+str(DATA['POSITION']['POW']+100)+",E"]
         
-        print(','.join(DATA_new))
-        envoyer_data_df(ser, DATA_new, float(f)*10**-3)
+        
+        if(DATA['REGLAGE']['ARRET'] == -1 and DATA['REGLAGE']['AUTO'] == 1):
+            envoyer_data_df(ser, 'A', float(f)*10**-3)
+            #print('A')
+        if(DATA['REGLAGE']['ARRET'] == 1 and DATA['REGLAGE']['AUTO'] == -1):
+            envoyer_data_df(ser, 'C', float(f)*10**-3)
+            #print('C')
+        if(DATA['REGLAGE']['ARRET'] == 1 and DATA['REGLAGE']['AUTO'] == 1):
+            if(DATA_new != ["S,228,0,0,100,F"]):
+                 envoyer_data_df(ser, DATA_new, float(f)*10**-3)
+                 #print(','.join(DATA_new))
+
+def affichage(text:str):
+     parties = text.split(',')
+     #for i in range(len(parties)):
+      #    print(parties[i])
+     X, Y = wgs2lamb(float(parties[4]), float(parties[5]))
+     print(">----------------------------------------------------<")
+     print("Distance : {0:.1f} ({1:}, {2:})".format(float(parties[1]), X, Y))
+     print("Etats : {0:.1f} C°; humidité : {1:.1f}.".format(float(parties[3]), float(parties[2])))
+     print(datetime.now().strftime("%H:%M:%S"))
+     print(">----------------------------------------------------<")
