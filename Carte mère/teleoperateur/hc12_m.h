@@ -11,20 +11,24 @@ class HC12_m
     int RX;
     int baud_rate;
     String DATA_IN;
-    String DATA_OUT;
+    String DATA_OUT = DATA_IN;
+    String DATA_FROM;
     unsigned long previousMillis_in = 0;
     unsigned long previousMillis_out = 0;
-    unsigned long interval_in;
-    unsigned long interval_out;
-    
+    unsigned long previousMillis_from = 0;
+    unsigned long interval_in = 2;
+    unsigned long interval_out = 10;
+    unsigned long interval_from = 250;
+
+    bool OUT = true;
+    bool FROM = true;
+
     SoftwareSerial hc12_module;
-    
+
   public:
-    HC12_m(int RX, int TX, unsigned long interval) : hc12_module(RX, TX) {
+    HC12_m(int RX, int TX) : hc12_module(RX, TX) {
       this->TX = TX;
       this->RX = RX;
-      this->interval_in = interval_in;
-      this->interval_out = interval_out;
     }
 
     void begin_hc12(int baud_rate)
@@ -33,97 +37,105 @@ class HC12_m
       hc12_module.begin(baud_rate);
     }
 
+    // ---------------------------------------------------
+
+    void communication()
+    {
+      // Recepetion data_from
+      unsigned long currentMillis_from = millis();
+      if (currentMillis_from - previousMillis_from >= interval_from)
+      {
+        this->previousMillis_from = millis();
+        if (hc12_module.available())
+        {
+          char c = hc12_module.read();
+          if (c == 'V')
+          {
+            int it = 1;
+            this->DATA_FROM = "V";
+            while (c != 'F' && it <= 45)
+            {
+              c = hc12_module.read();
+              this->DATA_FROM += c;
+              it += 1;
+            }
+          }
+        }
+        //Serial.println(DATA_FROM);
+        if(check_sum_out(DATA_FROM, 7, 45, 18, 'V', 'F'))
+        {
+          this->DATA_FROM = DATA_FROM;
+          this->FROM = true;
+          Serial.println(DATA_FROM);
+        }
+        else
+        {
+          this->DATA_FROM ="";
+          this->FROM = false;
+        }
+        hc12_module.flush();
+      }
+
+      // ================ Envoie du in =========================
+      unsigned long currentMillis_out = millis();
+      if (currentMillis_out - previousMillis_out >= interval_out)
+      {
+        this->previousMillis_out = millis();
+        char data = Serial.read();
+        hc12_module.print(DATA_IN);
+      }
+    }
+
+    bool reception()
+    {
+      return FROM;
+    }
+
+    int prox()
+    {
+      if(FROM)
+      {
+        int deb = DATA_FROM.indexOf(",");
+        int fin = DATA_FROM.indexOf(",", deb + 1);
+        return atoi(DATA_FROM.substring(deb + 1, fin).c_str());
+      }
+      return -1;
+    }
+
     void pc2c1()
     {
-      unsigned long currentMillis_in = millis();
-
-      // Tout les interval de temps
-      if (currentMillis_in - previousMillis_in >= interval_in)
+      if (millis() - previousMillis_in >= interval_in)
       {
-        this->previousMillis_in = currentMillis_in;
-
-        // Si le module est accessible
-        if(Serial.available())
+        this->previousMillis_in = millis();
+        if (Serial.available())
         {
           char c = Serial.read();
-          if(c == 'S')
+          if (c == 'S')
           {
             int it = 1;
             this->DATA_IN = "S";
-            while(c != 'E' && it <18)
+            while (c != 'E' && it <= 18)
             {
               c = Serial.read();
               this->DATA_IN += c;
               it += 1;
             }
           }
+
         }
         // On vérifie la validité des informations reçues
-        if(check_sum(DATA_IN, 5, 18, 11, 'S', 'E'))
+        if (check_sum(DATA_IN, 5, 20, 11, 'S', 'E'))
         {
           this->DATA_IN = DATA_IN;
-          Serial.println(DATA_IN);
         }
-      }
-      else
-      {
-        this->DATA_IN = "";
-      }
-      
-      if(hc12_module.available())
-      {
-        char decomp[DATA_IN.length()+1];
-        DATA_IN.toCharArray(decomp, sizeof(decomp));
-        hc12_module.write(decomp, sizeof(decomp));
-      }
-    }
-  
-    void c12c2()
-    {
-      // Tout les interval de temps
-      if(hc12_module.available())
-      {
-        char decomp[DATA_IN.length()+1];
-        DATA_IN.toCharArray(decomp, sizeof(decomp));
-        hc12_module.write(decomp, sizeof(decomp));
-      }
-    }
-
-    bool c22c1()
-    {
-      if(hc12_module.available())
-      {
-        char c = hc12_module.read();
-        if(c == 'V')
+        else
         {
-          int it = 1;
-          this->DATA_OUT = "V";
-          while(c != 'F' && it <18)
-          {
-            c = hc12_module.read();
-            this->DATA_OUT += c;
-            it += 1;
-          }
+          this->DATA_IN = "";
         }
-        return true;
       }
-      else
-      {
-        DATA_OUT = "";
-        return false;
-      }
+      // TEMPORAIRE ======================================
     }
+    // -------------------------------------------
 
-    void c12pc()
-    {
-      // Tout les interval de temps
-      if(Serial.available())
-      {
-        char decomp[DATA_OUT.length()+1];
-        DATA_OUT.toCharArray(decomp, sizeof(decomp));
-        Serial.write(decomp, sizeof(decomp));
-      }
-    }
-    
 };
 #endif // HC12_H

@@ -50,4 +50,36 @@ bool check_sum(String message, int virgule, int max_length, int min_length, char
   }
 }
 
+bool check_sum_out(String message, int virgule, int max_length, int min_length, char deb, char fin)
+{
+  int commaCount = 0;
+  bool foundStart = false;
+  bool foundEnd = false;
+  for (int i = 0; i < message.length(); i++) 
+  {
+      if (message[i] == deb) {
+          foundStart = true;
+          continue;
+      }
+      if (foundStart && message[i] == fin) 
+      {
+          foundEnd = true;
+          break;
+      }
+      if (foundStart && message[i] == ',') 
+      {
+          commaCount++;
+      }
+  }
+
+  if (commaCount == virgule && foundStart == true && foundEnd == true) 
+  {
+      return true;
+  } 
+  else 
+  {
+      return false;
+  }
+}
+
 #endif
