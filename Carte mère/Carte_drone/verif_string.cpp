@@ -25,26 +25,53 @@ bool check_sum(String message, int virgule, int max_length, int min_length, char
 
   if (commaCount == virgule && foundStart == true && foundEnd == true) 
   {
-      if(strlen(message.c_str()) <= max_length || strlen(message.c_str()) >= min_length)
-      {
-        String Psi_test = message.substring(2,5);
-        String Psi_pow = message.substring(message.length()-5,message.length()-2);
-        if(Psi_test.length() == 3 && Psi_pow.length() == 3)
-        {
-          return true;
-        }
-        else
-        {
-          return false;
-        }
-      }
-      else
-      {
-        return false;
-      }
+      return true;
   } 
   else 
   {
       return false;
+  }
+}
+
+bool verif_integrite(String message)
+{
+  int values[4];
+  int index = 0;
+  int startInd = 2;
+
+  for(int i=startInd; i< message.length(); i++)
+  {
+    if(message.charAt(i) == ',')
+    {
+      String val = message.substring(startInd, i);
+      values[index] = val.toInt();
+      startInd = i + 1;
+      index++;
+    }
+    if(index >= 4)
+    {
+      break;
+    }
+    
+  }
+  if(values[0] > 356 || values[0] < 100)
+  {
+    return false;
+  }
+  else if(values[3] > 356 || values[3] < 100)
+  {
+    return false;
+  }
+  else if(values[1] > 2 || values[0] < 0)
+  {
+    return false;
+  }
+  else if(values[2] > 2 || values[0] < -2)
+  {
+    return false;
+  }
+  else
+  {
+    return true;
   }
 }

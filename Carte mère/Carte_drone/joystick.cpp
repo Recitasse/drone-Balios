@@ -12,7 +12,7 @@ float signe(float x) {
 }
 
 // LEcture des données du joystick
-void joystick_lec(int* etats, float* Prop, int aff, int autom)
+void joystick_lec(float* etats, float* Prop, int autom)
 {
   float X = etats[1];
   float Y = etats[2];
@@ -90,15 +90,5 @@ void joystick_lec(int* etats, float* Prop, int aff, int autom)
       }
   
     }
-  }
-
-  if(aff == 1)
-  {
-    for(int i=0; i<4; i++)
-    {
-      Serial.print(Prop[i]);
-      Serial.print("\t");
-    }
-    Serial.print("\n");
   }
 }
