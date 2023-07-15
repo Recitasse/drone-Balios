@@ -10,7 +10,7 @@ class HC12
     unsigned long previousMillis_in = 0;
     unsigned long previousMillis_out = 0;
     unsigned long interval_in = 2;
-    unsigned long interval_out = 250;
+    unsigned long interval_out = 150;
     float dir[3];
     bool transmission = true;
     bool check_sum_cond = false;
@@ -20,6 +20,8 @@ class HC12
       float Y;
       float Psi;
       int mode;
+      bool autom = false;
+      bool arret = false;
       float Prop[4] = {1000.0, 1000.0, 1500.0, 1500.0};
     } commande;
     
@@ -37,13 +39,15 @@ class HC12
     {
       
       this->previousMillis_in = millis();
+      char first = '0';
       if (Serial2.available()) 
       {
         char c = Serial2.read();
-        if(c == 'S')
+        
+        if(c == 'S' || c == 'A' || c == 'C')
         {
           int it = 1;
-          this->DATA_IN = "S";
+          this->DATA_IN = c;
           while(c != 'E' && it <18)
           {
             c = Serial2.read();
@@ -53,40 +57,66 @@ class HC12
         }
       }
       
-      if(check_sum(DATA_IN, 5, 18, 11, 'S', 'E') && verif_integrite(DATA_IN))
+      if(check_sum(DATA_IN, 5, 18, 11, 'E') && verif_integrite(DATA_IN))
       {
-        float data[4];
-        int index[5];
-        int k = 0;
-        for(int i=0; i<=DATA_IN.length(); i++)
+        
+        if(DATA_IN[0] == 'A')
         {
-          if(DATA_IN[i] == ',')
-          {
-            index[k] = i+1;
-            k++;
-          }
+          this->commande.autom = true;
+          //Serial.print("Autom : "); Serial.println(commande.autom);
         }
-
-        data[0] = atoi(DATA_IN.substring(index[0], index[1]).c_str());
-        data[1] = atoi(DATA_IN.substring(index[1], index[2]).c_str());
-        data[2] = atoi(DATA_IN.substring(index[2], index[3]).c_str());
-        data[3] = atoi(DATA_IN.substring(index[3], index[4]).c_str());
-          
-        this->commande.X = data[1];
-        this->commande.Y = data[2];
-        this->commande.Psi = 2*(data[3]-100)/256*(data[0]-228)/128;
-
-        this->dir[0] = commande.Psi;
-        this->dir[1] = commande.X;
-        this->dir[2] = commande.Y;
-
-        /*Serial.print(dir[0]);
-        Serial.print("\t");
-        Serial.print(dir[1]);
-        Serial.print("\t");
-        Serial.println(dir[2]);*/
+        else if(DATA_IN[0] == 'C')
+        {
+          this->commande.arret = true;
+          //Serial.print("Arret : "); Serial.println(commande.arret);
+        }
+        
+        else
+        {
+          this->commande.arret = false;
+          this->commande.autom = false;
+          //Serial.println("Mode manuel");
+          float data[4];
+          int index[5];
+          int k = 0;
+          for(int i=0; i<=DATA_IN.length(); i++)
+          {
+            if(DATA_IN[i] == ',')
+            {
+              index[k] = i+1;
+              k++;
+            }
+          }
+  
+          data[0] = atoi(DATA_IN.substring(index[0], index[1]).c_str());
+          data[1] = atoi(DATA_IN.substring(index[1], index[2]).c_str());
+          data[2] = atoi(DATA_IN.substring(index[2], index[3]).c_str());
+          data[3] = atoi(DATA_IN.substring(index[3], index[4]).c_str());
+            
+          this->commande.X = data[1];
+          this->commande.Y = data[2];
+          this->commande.Psi = 2*(data[3]-100)/256*(data[0]-228)/128;
+  
+          this->dir[0] = commande.Psi;
+          this->dir[1] = commande.X;
+          this->dir[2] = commande.Y;
+  
+          /*Serial.print(dir[0]);
+          Serial.print("\t");
+          Serial.print(dir[1]);
+          Serial.print("\t");
+          Serial.println(dir[2]);*/
+        }
       }
     }
+  }
+
+  bool* get_mode()
+  {
+    static bool mode[2];
+    mode[0] = commande.autom;
+    mode[1] = commande.arret;
+    return mode;
   }
 
   void envoyer(String DATA_OUT)

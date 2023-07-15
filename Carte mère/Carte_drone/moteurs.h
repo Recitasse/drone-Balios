@@ -96,7 +96,7 @@ class MOTEURS
 
     // ============== Partie régulation ==================
 
-    void PID(float* states, float* Commande)
+    void PID_manuel(float* states, float* Commande)
     {
       redim(4,2,2,Commande);
       

@@ -1,14 +1,15 @@
 #include <Arduino.h>
 
+
 // ------------------------------ Envoie ------------------------
-bool check_sum(String message, int virgule, int max_length, int min_length, char deb, char fin)
+bool check_sum(String message, int virgule, int max_length, int min_length, char fin)
 {
   int commaCount = 0;
   bool foundStart = false;
   bool foundEnd = false;
   for (int i = 0; i < message.length(); i++) 
   {
-      if (message[i] == deb) {
+      if (message[i] == 'C' || message[i] == 'A' || message[i] == 'S') {
           foundStart = true;
           continue;
       }
@@ -54,7 +55,7 @@ bool verif_integrite(String message)
     }
     
   }
-  if(values[0] > 356 || values[0] < 100)
+  if(values[0] > 500 || values[0] < 100)
   {
     return false;
   }

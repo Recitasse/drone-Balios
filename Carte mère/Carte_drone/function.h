@@ -6,10 +6,11 @@
 
 float signe(float x);
 void joystick_lec(float* etats, float* Prop, int autom);
-bool check_sum(String message, int virgule, int max_length, int min_length, char deb, char fin);
+bool check_sum(String message, int virgule, int max_length, int min_length, char fin);
 void redim(float fac_psi, float fac_vx, float fac_vy, float* &Commande);
 String get_coord(SoftwareSerial serialgps, TinyGPS gps);
 bool verif_integrite(String message);
+int supra_command(String message);
 
 typedef struct {
   float vx = 0;

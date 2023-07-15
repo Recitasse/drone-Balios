@@ -19,8 +19,8 @@
 #define ESC_BR_PWM 10 // Pin pour les ESC
 #define DHTPIN 4
 #define ARRET 45 // bouton d'arret
-#define MANUEL 41 // led verte
-#define AUTO 43 // led jaune
+#define MANUEL 43 // led verte
+#define AUTO 41 // led jaune
 
 TinyGPS gps;
 
@@ -62,39 +62,65 @@ void loop() {
 
   hc.communication();
   hc.get_commande(Commande);
- 
-  sonar_data.start_time = micros();
-  sonar.filtre_distance(0.1, sonar_data);
-  sonar_data.end_time = micros();
-  
-  humidite_data.start_time = micros();
-  hum_temp.mesurer_humidite_temp(humidite_data, temp_data);
-  humidite_data.end_time = micros();
+  bool* mode = hc.get_mode();
 
-  String gps_lat = "";
-  String gps_long = "";
-  while (Serial1.available()) 
+  // --------------------------------------------
+  if(mode[1] == false)
   {
-    int c = Serial1.read(); 
-    if(gps.encode(c)) 
+    sonar_data.start_time = micros();
+    sonar.filtre_distance(0.1, sonar_data);
+    sonar_data.end_time = micros();
+    
+    humidite_data.start_time = micros();
+    hum_temp.mesurer_humidite_temp(humidite_data, temp_data);
+    humidite_data.end_time = micros();
+  
+    String gps_lat = "";
+    String gps_long = "";
+    while (Serial1.available()) 
     {
-      float latitude, longitude;
-      gps.f_get_position(&latitude, &longitude);
-      gps_long = String(longitude, 6);
-      gps_lat = String(latitude, 6);
+      int c = Serial1.read(); 
+      if(gps.encode(c)) 
+      {
+        float latitude, longitude;
+        gps.f_get_position(&latitude, &longitude);
+        gps_long = String(longitude, 6);
+        gps_lat = String(latitude, 6);
+      }
+    }
+    
+    gyro_end = millis();
+    data_gyro = gyro.gyro_etats(gyro_end-gyro_start);
+    gyro_start = millis();
+    gyro.get_data_reg(states);
+  
+    String prof = "2.36";
+    gps_lat = "47.127411";
+    gps_long = "1.127411";
+    String DATA_OUT = "V,"+String(int(sonar_data.sy))+","+String(int(humidite_data.sy))+","+String(int(temp_data.sy))+","+gps_lat+","+gps_long+","+prof+",F";
+    hc.envoyer(DATA_OUT);
+
+    if(mode[0] == false)
+    {
+      moteurs.PID_manuel(states, Commande);
+      digitalWrite(ARRET, LOW);
+      digitalWrite(MANUEL, HIGH);
+      digitalWrite(AUTO, LOW);
+    }
+    else
+    {
+      digitalWrite(ARRET, LOW);
+      digitalWrite(MANUEL, LOW);
+      digitalWrite(AUTO, HIGH);
     }
   }
+  else
+  {
+    digitalWrite(ARRET, HIGH);
+    digitalWrite(MANUEL, LOW);
+    digitalWrite(AUTO, LOW);
+  }
   
-  gyro_end = millis();
-  data_gyro = gyro.gyro_etats(gyro_end-gyro_start);
-  gyro_start = millis();
-  gyro.get_data_reg(states);
 
-  String prof = "2.36";
-  gps_lat = "47.127411";
-  gps_long = "1.127411";
-  String DATA_OUT = "V,"+String(int(sonar_data.sy))+","+String(int(humidite_data.sy))+","+String(int(temp_data.sy))+","+gps_lat+","+gps_long+","+prof+",F";
-  hc.envoyer(DATA_OUT);
-
-  moteurs.PID(states, Commande);
+  
 }
