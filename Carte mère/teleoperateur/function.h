@@ -2,14 +2,14 @@
 #define FUNCTION_H
 
 // ------------------------------ Envoie ------------------------
-bool check_sum(String message, int virgule, int max_length, int min_length, char deb, char fin)
+bool check_sum(String message, int virgule, int max_length, int min_length, char fin)
 {
   int commaCount = 0;
   bool foundStart = false;
   bool foundEnd = false;
   for (int i = 0; i < message.length(); i++) 
   {
-      if (message[i] == deb) {
+      if (message[i] == 'C' || message[i] == 'A' || message[i] == 'S' || message[i] == 'V') {
           foundStart = true;
           continue;
       }
@@ -50,14 +50,14 @@ bool check_sum(String message, int virgule, int max_length, int min_length, char
   }
 }
 
-bool check_sum_out(String message, int virgule, int max_length, int min_length, char deb, char fin)
+bool check_sum_out(String message, int virgule, int max_length, int min_length, char fin)
 {
   int commaCount = 0;
   bool foundStart = false;
   bool foundEnd = false;
   for (int i = 0; i < message.length(); i++) 
   {
-      if (message[i] == deb) {
+      if (message[i] == 'V') {
           foundStart = true;
           continue;
       }
@@ -81,5 +81,6 @@ bool check_sum_out(String message, int virgule, int max_length, int min_length, 
       return false;
   }
 }
+
 
 #endif

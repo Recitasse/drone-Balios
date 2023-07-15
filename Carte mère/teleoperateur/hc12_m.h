@@ -18,7 +18,7 @@ class HC12_m
     unsigned long previousMillis_from = 0;
     unsigned long interval_in = 2;
     unsigned long interval_out = 10;
-    unsigned long interval_from = 250;
+    unsigned long interval_from = 25;
 
     bool OUT = true;
     bool FROM = true;
@@ -62,7 +62,7 @@ class HC12_m
           }
         }
         //Serial.println(DATA_FROM);
-        if(check_sum_out(DATA_FROM, 7, 45, 18, 'V', 'F'))
+        if(check_sum_out(DATA_FROM, 7, 45, 18, 'F'))
         {
           this->DATA_FROM = DATA_FROM;
           this->FROM = true;
@@ -81,7 +81,6 @@ class HC12_m
       if (currentMillis_out - previousMillis_out >= interval_out)
       {
         this->previousMillis_out = millis();
-        char data = Serial.read();
         hc12_module.print(DATA_IN);
       }
     }
@@ -110,10 +109,10 @@ class HC12_m
         if (Serial.available())
         {
           char c = Serial.read();
-          if (c == 'S')
+          if (c == 'S' || c == 'A' || c == 'C')
           {
             int it = 1;
-            this->DATA_IN = "S";
+            this->DATA_IN = c;
             while (c != 'E' && it <= 18)
             {
               c = Serial.read();
@@ -121,10 +120,10 @@ class HC12_m
               it += 1;
             }
           }
-
         }
+        //Serial.println(DATA_IN);
         // On vérifie la validité des informations reçues
-        if (check_sum(DATA_IN, 5, 20, 11, 'S', 'E'))
+        if (check_sum(DATA_IN, 5, 20, 11, 'E'))
         {
           this->DATA_IN = DATA_IN;
         }
