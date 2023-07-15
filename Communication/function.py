@@ -114,20 +114,20 @@ async def read_events_f(device,ser, f):
                DATA['POSITION']['PSI'] = 1*event.value*5
             elif event.code == evdev.ecodes.BTN_TR:
                DATA['POSITION']['PSI'] = -1*event.value*5
-               
-        DATA_new = ["S,"+str(map_angle(DATA['POSITION']['PSI']))+","+str(DATA['POSITION']['X'])+","+str(DATA['POSITION']['Y'])+","+str(DATA['POSITION']['POW']+100)+",E"]
-        
-        
+            
         if(DATA['REGLAGE']['ARRET'] == -1 and DATA['REGLAGE']['AUTO'] == 1):
-            envoyer_data_df(ser, 'A', float(f)*10**-3)
-            #print('A')
-        if(DATA['REGLAGE']['ARRET'] == 1 and DATA['REGLAGE']['AUTO'] == -1):
-            envoyer_data_df(ser, 'C', float(f)*10**-3)
-            #print('C')
-        if(DATA['REGLAGE']['ARRET'] == 1 and DATA['REGLAGE']['AUTO'] == 1):
-            if(DATA_new != ["S,228,0,0,100,F"]):
-                 envoyer_data_df(ser, DATA_new, float(f)*10**-3)
-                 #print(','.join(DATA_new))
+            DATA_new = ["C,228,0,0,100,E"]
+            envoyer_data_df(ser, DATA_new, float(f)*10**-3)
+        elif(DATA['REGLAGE']['ARRET'] == 1 and DATA['REGLAGE']['AUTO'] == -1):
+            DATA_new = ["A,228,0,0,100,E"]
+            envoyer_data_df(ser, DATA_new, float(f)*10**-3)
+         
+        else:
+         DATA_new = ["S,"+str(map_angle(DATA['POSITION']['PSI']))+","+str(DATA['POSITION']['X'])+","+str(DATA['POSITION']['Y'])+","+str(DATA['POSITION']['POW']+100)+",E"]
+         envoyer_data_df(ser, DATA_new, float(f)*10**-3)
+         #print(DATA_new)
+
+        
 
 def affichage(text:str):
      parties = text.split(',')

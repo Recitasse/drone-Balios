@@ -17,23 +17,27 @@ async def get_data(ser: serial, bdd: BDD):
     ser.read(size=2048).decode('ascii', errors='ignore').strip()
 
     while True:
-        text = ser.read(size=2048).decode('ascii', errors='ignore').strip()
-        #print(text)
-        if text:
-            parties = text.split(',')
-            if(integrite(parties)):
-                bdd.integration_gps_lat(float(parties[4]))
-                bdd.integration_gps_long(float(parties[5]))
-                bdd.integration_sonar(float(parties[6]))
-                X, Y = wgs2lamb(float(parties[4]), float(parties[5]))
-                bdd.integration_X_lambert93(X)
-                bdd.integration_Y_lambert93(Y)
-                affichage(text)
-                await asyncio.sleep(1)
-            else:
-                print(text)
+        try:
+            text = ser.read(size=2048).decode('ascii', errors='ignore').strip()
+            #print(text)
+            if text:
+                parties = text.split(',')
+                if(integrite(parties)):
+                    bdd.integration_gps_lat(float(parties[4]))
+                    bdd.integration_gps_long(float(parties[5]))
+                    bdd.integration_sonar(float(parties[6]))
+                    X, Y = wgs2lamb(float(parties[4]), float(parties[5]))
+                    bdd.integration_X_lambert93(X)
+                    bdd.integration_Y_lambert93(Y)
+                    affichage(text)
+                    await asyncio.sleep(1)
+                else:
+                    print(text)
 
-        else:
+            else:
+                await asyncio.sleep(0.005)
+        except ValueError:
+            print("ERROR")
             await asyncio.sleep(0.005)
 
 async def main():
